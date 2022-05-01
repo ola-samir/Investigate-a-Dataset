@@ -8,7 +8,8 @@
 # <ul>
 # <li><a href="#intro">Introduction</a></li>
 # <li><a href="#wrangling">Data Wrangling</a></li>
-
+# <li><a href="#eda">Exploratory Data Analysis</a></li>
+# <li><a href="#conclusions">Conclusions</a></li>
 # </ul>
 
 # <a id='intro'></a>
@@ -42,6 +43,14 @@
 # budget_adj              
 # revenue_adj 
 # 
+# 
+# ### Question(s) for Analysis
+# 
+# 1- What is the relation between number of movies and year of release ?
+# 2- What is the average runtime of movies ?
+# 3- Does the big budget movies have the most popularity ?
+# 4- Is the rating of movies getting better or worse or staying the same over time ?
+# 5- Which genre has the highest number of movies ?
 # 
 
 
@@ -182,4 +191,323 @@ df.shape
 
 
 df.head(3)
+
+# ## Exploratory Data Analysis
+# 
+# 
+# ### Research Question 1 (What is the relation between number of movies and year of release ?)
+
+# In[17]:
+
+
+# count the number of movies in each year then sort the result to arrange years ascending
+num_movies_year = df["release_year"].value_counts().sort_index()
+print(num_movies_year)
+
+
+# In[18]:
+
+
+# then we plot the relationship between number of movies and release year
+num_movies_year.plot(kind='bar',title='Number Of Movies per Year', figsize=(20,8))
+plt.xlabel('Year')
+plt.ylabel('Number Of Movies')
+
+
+# - the number of movies increase over the years.
+# - from the plot , we notice that 2011 is the year when the highest number of movies released.
+
+# ### Research Question 2  (What is the average runtime of movies ?)
+
+# In[19]:
+
+
+# we calculate the runtime statistics
+df["runtime"].describe()
+
+
+# In[20]:
+
+
+# then we plot the relationship between runtime and number of movies
+plt.figure(figsize=(20,8))
+plt.title('Runtime of all the movies')
+plt.xlabel('Runtime')
+plt.ylabel('Number Of Movies')
+plt.hist(df['runtime'], bins =30);
+
+
+# - the distribution is right skewed .
+# - the average runtime is 109 mins.
+# - min runtime is 15 mins and max runtime is 338 mins.
+# - 25% of movies have runtime less than 96 min
+# - 50% of movies have runtime less than 106 min
+# - 75% of movies have runtime less than 119 min
+
+# ### Research Question 3 ( Does the big budget movies have the most popularity ? )
+
+# In[21]:
+
+
+# we visualize two columns by scatter plot for the budget and popularity
+sns.regplot(x=df["budget"],y=df["popularity"]).set_title("Budget VS Popularity",size=20)
+
+
+# - the most expensive movies have the most popularity.
+# - the relationship between budget and popularity is positive.
+
+# ### Research Question 4 ( Is the rating of movies getting better or worse or staying the same over time ?)
+
+# In[22]:
+
+
+# calculate the mean of vote_average and groupby release_year
+movies_rating = df.groupby('release_year')['vote_average'].mean()
+
+
+# In[23]:
+
+
+# plot relationship between vote_average and release_year
+movies_rating.plot(kind='line',color='green',figsize = (10,5))
+plt.title('Average Rating VS Years')
+plt.xlabel('vote_averge')
+plt.ylabel('release_year')
+
+
+# - from the graph , we notice that movies rating is decreasing over years.
+# - the newest movies have the least ratings.
+
+# ### Research Question 5 (Which genre has the highest number of movies ?)
+
+# - Certain columns like 'genres' contain multiple values separated by pipe (|) characters , So we are going to split this column to a number of separate columns inorder to make our analysis more clear.
+
+# In[24]:
+
+
+# Splitting the multiple genres entries into separate columns.
+genres_df = df['genres'].str.split("|", expand=True)
+genres_df.head(3)
+
+
+# In[25]:
+
+
+# Creating a separate dataframe form unique genres records.
+genres_df = genres_df.stack()
+genres_df = pd.DataFrame(genres_df)
+genres_df.head()
+
+
+# In[26]:
+
+
+#Renaming the genres column and verifying the genres value count
+genres_df.rename(columns={0:'genres_adj'}, inplace=True)
+counts= genres_df.genres_adj.value_counts()
+print(counts)
+
+
+# In[27]:
+
+
+# plot the counts of genres in percentage
+counts.plot(kind="pie",figsize=(9,9),autopct="%1.1f%%")
+plt.title('Genres Percentage')
+
+
+# - from the pie chart , we found that "Drama" is the genre which has the highest number of movies by 17% .. Next after drama is comdey by 13.2%
+
+# 
+# ## Conclusions
+# - From rating the movies are getting worse over time.
+# - The film industry is a profit industry over time.
+# - the number of movies are increasing over years.
+# - The average runtime is 109 min.
+# - The most frequent genre is Drama.
+# - The more budget the movie have, More popular will get.
+# 
+# 
+# ### Limitations
+# - Missing values in the data effect the results.
+# - budget and revenue have alot of zeros values and had to delete alot of rows.
+# - Outliers in runtime, and decide what the best way to deal whith them.
+# - budget and revenue do not have currency unit.
+# 
+# 
+# ## Submitting your Project 
+# 
+# > **Tip**: Before you submit your project, you need to create a .html or .pdf version of this notebook in the workspace here. To do that, run the code cell below. If it worked correctly, you should get a return code of 0, and you should see the generated .html file in the workspace directory (click on the orange Jupyter icon in the upper left).
+# 
+# > **Tip**: Alternatively, you can download this report as .html via the **File** > **Download as** submenu, and then manually upload it into the workspace directory by clicking on the orange Jupyter icon in the upper left, then using the Upload button.
+# 
+# > **Tip**: Once you've done this, you can submit your project by clicking on the "Submit Project" button in the lower right here. This will create and submit a zip file with this .ipynb doc and the .html or .pdf version you created. Congratulations!
+
+# In[28]:
+
+
+from subprocess import call
+call(['python', '-m', 'nbconvert', 'Investigate_a_Dataset.ipynb'])
+
+
+
+# ## Exploratory Data Analysis
+# 
+# 
+# ### Research Question 1 (What is the relation between number of movies and year of release ?)
+
+# In[17]:
+
+
+# count the number of movies in each year then sort the result to arrange years ascending
+num_movies_year = df["release_year"].value_counts().sort_index()
+print(num_movies_year)
+
+
+# In[18]:
+
+
+# then we plot the relationship between number of movies and release year
+num_movies_year.plot(kind='bar',title='Number Of Movies per Year', figsize=(20,8))
+plt.xlabel('Year')
+plt.ylabel('Number Of Movies')
+
+
+# - the number of movies increase over the years.
+# - from the plot , we notice that 2011 is the year when the highest number of movies released.
+
+# ### Research Question 2  (What is the average runtime of movies ?)
+
+# In[19]:
+
+
+# we calculate the runtime statistics
+df["runtime"].describe()
+
+
+# In[20]:
+
+
+# then we plot the relationship between runtime and number of movies
+plt.figure(figsize=(20,8))
+plt.title('Runtime of all the movies')
+plt.xlabel('Runtime')
+plt.ylabel('Number Of Movies')
+plt.hist(df['runtime'], bins =30);
+
+
+# - the distribution is right skewed .
+# - the average runtime is 109 mins.
+# - min runtime is 15 mins and max runtime is 338 mins.
+# - 25% of movies have runtime less than 96 min
+# - 50% of movies have runtime less than 106 min
+# - 75% of movies have runtime less than 119 min
+
+# ### Research Question 3 ( Does the big budget movies have the most popularity ? )
+
+# In[21]:
+
+
+# we visualize two columns by scatter plot for the budget and popularity
+sns.regplot(x=df["budget"],y=df["popularity"]).set_title("Budget VS Popularity",size=20)
+
+
+# - the most expensive movies have the most popularity.
+# - the relationship between budget and popularity is positive.
+
+# ### Research Question 4 ( Is the rating of movies getting better or worse or staying the same over time ?)
+
+# In[22]:
+
+
+# calculate the mean of vote_average and groupby release_year
+movies_rating = df.groupby('release_year')['vote_average'].mean()
+
+
+# In[23]:
+
+
+# plot relationship between vote_average and release_year
+movies_rating.plot(kind='line',color='green',figsize = (10,5))
+plt.title('Average Rating VS Years')
+plt.xlabel('vote_averge')
+plt.ylabel('release_year')
+
+
+# - from the graph , we notice that movies rating is decreasing over years.
+# - the newest movies have the least ratings.
+
+# ### Research Question 5 (Which genre has the highest number of movies ?)
+
+# - Certain columns like 'genres' contain multiple values separated by pipe (|) characters , So we are going to split this column to a number of separate columns inorder to make our analysis more clear.
+
+# In[24]:
+
+
+# Splitting the multiple genres entries into separate columns.
+genres_df = df['genres'].str.split("|", expand=True)
+genres_df.head(3)
+
+
+# In[25]:
+
+
+# Creating a separate dataframe form unique genres records.
+genres_df = genres_df.stack()
+genres_df = pd.DataFrame(genres_df)
+genres_df.head()
+
+
+# In[26]:
+
+
+#Renaming the genres column and verifying the genres value count
+genres_df.rename(columns={0:'genres_adj'}, inplace=True)
+counts= genres_df.genres_adj.value_counts()
+print(counts)
+
+
+# In[27]:
+
+
+# plot the counts of genres in percentage
+counts.plot(kind="pie",figsize=(9,9),autopct="%1.1f%%")
+plt.title('Genres Percentage')
+
+
+# - from the pie chart , we found that "Drama" is the genre which has the highest number of movies by 17% .. Next after drama is comdey by 13.2%
+
+# 
+# ## Conclusions
+# - From rating the movies are getting worse over time.
+# - The film industry is a profit industry over time.
+# - the number of movies are increasing over years.
+# - The average runtime is 109 min.
+# - The most frequent genre is Drama.
+# - The more budget the movie have, More popular will get.
+# 
+# 
+# ### Limitations
+# - Missing values in the data effect the results.
+# - budget and revenue have alot of zeros values and had to delete alot of rows.
+# - Outliers in runtime, and decide what the best way to deal whith them.
+# - budget and revenue do not have currency unit.
+# 
+# 
+# ## Submitting your Project 
+# 
+# > **Tip**: Before you submit your project, you need to create a .html or .pdf version of this notebook in the workspace here. To do that, run the code cell below. If it worked correctly, you should get a return code of 0, and you should see the generated .html file in the workspace directory (click on the orange Jupyter icon in the upper left).
+# 
+# > **Tip**: Alternatively, you can download this report as .html via the **File** > **Download as** submenu, and then manually upload it into the workspace directory by clicking on the orange Jupyter icon in the upper left, then using the Upload button.
+# 
+# > **Tip**: Once you've done this, you can submit your project by clicking on the "Submit Project" button in the lower right here. This will create and submit a zip file with this .ipynb doc and the .html or .pdf version you created. Congratulations!
+
+# In[28]:
+
+
+from subprocess import call
+call(['python', '-m', 'nbconvert', 'Investigate_a_Dataset.ipynb'])
+
+
+
 
